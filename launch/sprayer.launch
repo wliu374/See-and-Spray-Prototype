@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="dji_sdk" type="SprayNode.py" name="spray_node" output="screen"/>
+</launch>
+

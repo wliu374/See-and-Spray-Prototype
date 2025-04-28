@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="dji_sdk" type="ComputerVisionNode.py" name="computer_vision_node" output="screen"/>
+    <node pkg="dji_sdk" type="SprayNode.py" name="spray_node" output="screen"/>
+</launch>
+

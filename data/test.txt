@@ -1,0 +1,17 @@
+./APR_19_15ft/fragm
+./JUNE_18_55ft/fragm2
+./JUNE_20_15ft/phrag3 (2)
+./JUNE_20_55ft/phrag4
+./JUNE_20_55ft/phrag5
+./MAY_31_15ft/fragm5
+./MAY_31_15ft/fragm6
+./NOV_17_40ft/fragm4
+./OCT_10_55ft/fragm6
+./OCT_10_100ft/fragm4
+./OCT_10_100ft_LOWER/fragm4
+./OCT_10_175ft/fragm2
+./OCT_10_175ft_LOWER/fragm2
+./SEP_27_55ft/fragm9
+./SEP_27_55ft/fragm10
+./SEP_27_75ft/gragm4
+./SEP_27_100ft/fragm5

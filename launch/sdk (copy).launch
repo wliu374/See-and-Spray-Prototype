@@ -1,0 +1,17 @@
+<launch>
+    <node pkg="dji_sdk" type="dji_sdk_node" name="dji_sdk" output="screen">
+    <!-- node parameters -->
+    <param name="acm_name" type="string" value="/dev/ttyACM0"/>
+    <param name="serial_name" type="string" value="/dev/ttyUSB0"/>
+    <param name="baud_rate" type="int" value="921600"/>
+    <param name="app_id" type="int" value="1161220"/>
+    <param name="app_version" type="int" value="1"/>
+    <param name="align_time" type="bool" value="false"/>
+    <param name="enc_key" type="string" value="3d9d4a7b72d3b23fef99d6d62fdba8e0c76b85b3eb4d493971547caaf846e21b"/>
+    <param name="use_broadcast" type="bool" value="false"/>
+    </node>
+    <node pkg="dji_sdk" type="csvnode.py" name="csvnode" output="screen">
+    </node>
+    <node pkg="dji_sdk" type="gpsnode.py" name="gpsnode" output="screen">
+    </node>
+</launch>
