@@ -13,6 +13,5 @@
     <node pkg="dji_sdk" type="csvnode.py" name="csvnode" output="screen">
     </node>
     <node pkg="dji_sdk" type="gpsnode.py" name="gpsnode" output="screen">
-    </node>
-
+        </node>
 </launch>

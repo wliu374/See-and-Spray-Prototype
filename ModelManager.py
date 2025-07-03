@@ -8,7 +8,7 @@ class ModelManager:
             "mobilenetv4": MobileNetV4Segmentation(),
         }
         self.ckpt_paths = {
-            "mobilenetv4": "/home/wenxin/catkin_ws/src/Onboard-SDK-ROS/dji_sdk/results/models/mobilenetv4_small/model_best_r1-score.pth",
+            "mobilenetv4": "/home/wenxin/catkin_ws/src/Onboard-SDK-ROS/dji_sdk/results/models/mobilenetv4_small/model_best_r1-score_new.pth",
         }
         self.model_name = model_name
         self.device = device

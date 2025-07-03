@@ -16,12 +16,12 @@ import message_filters
 import pandas as pd
 import csv
 import os
-import Jetson.GPIO as GPIO
-out_pin = 7
-GPIO.setmode(GPIO.BOARD)
+# import Jetson.GPIO as GPIO
+# out_pin = 7
+# GPIO.setmode(GPIO.BOARD)
 import time
 
-GPIO.setup(out_pin, GPIO.OUT, initial = GPIO.LOW)
+# GPIO.setup(out_pin, GPIO.OUT, initial = GPIO.LOW)
 
 
 """
@@ -70,12 +70,12 @@ def gps_callback(data):
 
 def v3s_callback(v3data, navdata):
     rospy.loginfo("x vect: %f, y vect: %f, z vect: %f, alt: %f", v3data.vector.x, v3data.vector.y, v3data.vector.z, navdata.altitude)
-    if ((navdata.altitude > 0.5) and (navdata.altitude < 342.7)):
-        rospy.loginfo("stable, spraying...")
-        GPIO.output(out_pin, GPIO.HIGH)
+    # if ((navdata.altitude > 0.5) and (navdata.altitude < 342.7)):
+    #     rospy.loginfo("stable, spraying...")
+    #     GPIO.output(out_pin, GPIO.HIGH)
         #os.system("rosrun dji_sdk nozzle.py")
-        time.sleep(0.1)    
-        GPIO.output(out_pin, GPIO.LOW)
+        # time.sleep(0.1)    
+        # GPIO.output(out_pin, GPIO.LOW)
 """
 (abs(v3data.vector.x) < 0.01) and (abs(v3data.vector.y) < 0.01) and (abs(v3data.vector.z) < 0.01) and
 if ((navdata.altitude > 0.5) and (navdata.altitude < 342.7)):

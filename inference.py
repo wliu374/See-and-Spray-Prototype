@@ -10,7 +10,7 @@ import time
 from net import *
 
 # system-related parameters
-data_dir = "./dji_sdk/data"
+data_dir = "./data"
 train_dir = data_dir + "/train.txt"
 val_dir = data_dir + "/test.txt"
 image_dir = data_dir + "/Images/"
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     model = MobileNetV4Segmentation()
 
     # Load trained weights
-    checkpoint_path = "./dji_sdk/results/models/mobilenetv4_small/model_best_r1-score.pth"
+    checkpoint_path = "./results/models/mobilenetv4_small/model_best_r1-score.pth"
     model = load_model(checkpoint_path, model)
 
     # GPU warm up

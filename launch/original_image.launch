@@ -1,0 +1,4 @@
+<launch>
+        <node pkg="dji_sdk" type="CameraImageSave.py" name="computer_vision_node" output="screen"/>
+</launch>
+

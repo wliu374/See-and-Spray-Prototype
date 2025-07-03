@@ -6,7 +6,7 @@ class Camera:
     def __init__(self, i2c_bus=10, sensor_id = 0,
                  capture_width=960, capture_height=540, 
                  display_width=960,display_height=540,
-                 flip_method=0, framerate=60):
+                 flip_method=2, framerate=60):
         self.sensor_id = sensor_id
         self.capture_width = capture_width
         self.capture_height = capture_height
@@ -29,6 +29,7 @@ class Camera:
             "nvarguscamerasrc sensor-id=%d ! "
             "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
             "nvvidconv flip-method=%d ! "
+
             "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
             "videoconvert ! "
             "video/x-raw, format=(string)BGR ! appsink"
@@ -67,7 +68,8 @@ class Camera:
 
         print("🔧 Autofocus: sweeping...")
         cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
-        while cv2.getWindowProperty("CSI Camera", 0) >= 0:
+        while True:
+        # while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             frame = self.read()
             cv2.imshow("CSI Camera", frame)
 

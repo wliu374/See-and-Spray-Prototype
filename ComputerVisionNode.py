@@ -2,7 +2,7 @@
 import rospy
 from std_msgs.msg import Bool
 import cv2
-from Camera import Camera
+from Camera_no_autofocus import Camera
 from ModelManager import ModelManager
 import csv
 import time
@@ -22,8 +22,7 @@ class ComputerVisionNode:
         # Initialize camera
         camera_init_start = time.perf_counter()
         self.camera = Camera(i2c_bus=10)
-        if not self.camera.finish_focus:
-            self.camera.autofocus()
+
         self.save_dir = "/home/wenxin/Images/small/"
         self.interval = interval
         self.last_capture_time = time.perf_counter()
@@ -107,26 +106,24 @@ class ComputerVisionNode:
 
     def infer_and_decide(self,frame):
         output = self.run_model(frame)
-        cv2.imshow("CSI Camera",frame)
-        cv2.waitKey(1)
+        # cv2.imshow("CSI Camera",frame)
+        # cv2.waitKey(1)
 
         if self.model_name == "cascade":
             return len(output) > 0
         
+        h,w = output.shape[:2]
+        nh,nw = h//2,w//4
+        output = output[0:nh//2,nw:3*nw]
         sum = np.sum(output)
         return sum > 0
     
     def run(self):
         rospy.loginfo("🚀 Computer Vision node started.")
-        
-        if not self.camera.finish_focus:
-            rospy.loginfo("autofocus before run")      
-            self.camera.autofocus()
 
         frame_count = 1
         max_frame_count = 50
-
-        while not rospy.is_shutdown() and cv2.getWindowProperty('CSI Camera',0) >= 0:
+        while not rospy.is_shutdown():
             frame_read_start = time.perf_counter()
             frame = self.camera.read()
             if frame_read_start- self.last_capture_time >= self.interval:
@@ -164,7 +161,7 @@ class ComputerVisionNode:
         
 if __name__ == '__main__':
     try:
-        node = ComputerVisionNode("mobilenetv4")
+        node = ComputerVisionNode("cascade")
         node.run()
     except rospy.ROSInterruptException:
         pass
