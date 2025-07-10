@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="dji_sdk" type="rostopic_to_spray.py" name="spray_trigger_publisher" output="screen"/>
+</launch>
+

@@ -5,6 +5,7 @@ import Jetson.GPIO as GPIO
 import os
 import csv
 from datetime import datetime
+import time
 
 class SprayerNode:
     def __init__(self):
@@ -18,9 +19,12 @@ class SprayerNode:
         GPIO.setwarnings(False)
         GPIO.setup(self.gpio_pin, GPIO.OUT,initial=GPIO.LOW)
         self.gpio_status = 0
+        self.max_frame_count = 50
+        self.cnt_frame = 0
 
         # Optional logging
         self.csv_path = "/home/wenxin/spray_logs/spray_log.csv"  # Change to your path
+        self.csv_reception_path = "/home/wenxin/inference_logs/receptive_time.csv"
         self.ensure_log_file()
 
         # ROS subscriber
@@ -28,10 +32,12 @@ class SprayerNode:
         rospy.on_shutdown(self.cleanup)
 
     def ensure_log_file(self):
-        if not os.path.exists(self.csv_path):
-            with open(self.csv_path, mode='w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerow(['timestamp', 'spray_status'])
+        with open(self.csv_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['timestamp', 'spray_status'])
+        with open(self.csv_reception_path, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['timestamp'])
 
     def log_status(self, status):
         with open(self.csv_path, mode='a', newline='') as file:
@@ -51,6 +57,11 @@ class SprayerNode:
             GPIO.output(self.gpio_pin, GPIO.LOW)
             self.gpio_status = 0
             rospy.loginfo("❌ Nozzle OFF")
+        if self.cnt_frame < self.max_frame_count:
+            with open(self.csv_reception_path,mode = "a", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow([time.perf_counter()])
+            self.cnt_frame += 1
 
     def cleanup(self):
         rospy.loginfo("🧹 Cleaning up GPIO")

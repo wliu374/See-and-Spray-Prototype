@@ -10,7 +10,7 @@ import os
 import numpy as np
 
 class ComputerVisionNode:
-    def __init__(self,model_name = "cascade",interval = 2):
+    def __init__(self,model_name = "cascade",interval = 1):
         init_start = time.perf_counter()
 
         rospy.init_node('computer_vision_node', anonymous=True)
@@ -21,7 +21,10 @@ class ComputerVisionNode:
 
         # Initialize camera
         camera_init_start = time.perf_counter()
-        self.camera = Camera(i2c_bus=10)
+        self.camera =  Camera(i2c_bus=10,sensor_id = 0,
+                 capture_width=3840, capture_height=2160, 
+                 display_width=3840,display_height=2160,
+                 flip_method=2, framerate=30)
 
         self.save_dir = "/home/wenxin/Images/small/"
         self.interval = interval
@@ -45,14 +48,17 @@ class ComputerVisionNode:
         self.csv_frame_read = open("/home/wenxin/inference_logs/frame_read.csv",mode = "w",newline="")
         self.csv_decision_making = open("/home/wenxin/inference_logs/decision_making.csv",mode = "w",newline="")
         self.csv_run = open("/home/wenxin/inference_logs/run.csv",mode = "w",newline="")
+        self.csv_publish_time = open("/home/wenxin/inference_logs/publish_time.csv", mode = "w", newline="")
 
         self.csv_frame_read_writer = csv.writer(self.csv_frame_read)
         self.csv_decision_making_writer = csv.writer(self.csv_decision_making)
         self.csv_run_writer = csv.writer(self.csv_run)
+        self.csv_publish_writer = csv.writer(self.csv_publish_time)
 
         self.csv_frame_read_writer.writerow(["frame #","inference time"])
         self.csv_decision_making_writer.writerow(["frame #","inference_ time"])
-        self.csv_run_writer.writerow(["frame #","inference_ time"])
+        self.csv_run_writer.writerow(["frame #","inference_ time"])     
+        self.csv_publish_writer.writerow(["frame #","publish_ time"])    
 
         print("Computer vision node initialization finished!")
         init_end = time.perf_counter()
@@ -111,11 +117,9 @@ class ComputerVisionNode:
 
         if self.model_name == "cascade":
             return len(output) > 0
-        
-        h,w = output.shape[:2]
-        nh,nw = h//2,w//4
-        output = output[0:nh//2,nw:3*nw]
+        # print(output.shape)
         sum = np.sum(output)
+        print("sum",sum)
         return sum > 0
     
     def run(self):
@@ -126,6 +130,11 @@ class ComputerVisionNode:
         while not rospy.is_shutdown():
             frame_read_start = time.perf_counter()
             frame = self.camera.read()
+            h,w = frame.shape[:2]
+            nh,qw = h//3,w//4
+            nw = (w-qw)//2
+            print(nw)
+            frame = frame[0:nh,nw:nw+qw]
             if frame_read_start- self.last_capture_time >= self.interval:
                 self.save_frame(frame)
                 self.last_capture_time = frame_read_start
@@ -137,8 +146,8 @@ class ComputerVisionNode:
             self.spray_pub.publish(decision)
 
             rospy.loginfo(
-                f"frame read: {(decision_making_start - frame_read_start):.4f}s | "
-                f"decision made: {(spray_publish - decision_making_start):.4f}s | "
+                f"frame read: {(decision_making_start - frame_read_start):.4f}s | "  # time for frame reading
+                f"decision made: {(spray_publish - decision_making_start):.4f}s | "  # time for making decision
             )
             rospy.loginfo("Decision made: " + str(decision))
 
@@ -154,6 +163,9 @@ class ComputerVisionNode:
                 self.csv_run_writer.writerow([
                     frame_count,f"{(run_end - frame_read_start):.4f}"
                 ])
+                self.csv_publish_writer.writerow([
+                    frame_count,spray_publish
+                ])
                 frame_count += 1
         
         self.camera.release()
@@ -161,7 +173,7 @@ class ComputerVisionNode:
         
 if __name__ == '__main__':
     try:
-        node = ComputerVisionNode("cascade")
+        node = ComputerVisionNode("mobilenetv4")
         node.run()
     except rospy.ROSInterruptException:
         pass
